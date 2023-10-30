@@ -1,17 +1,23 @@
-export default class Controller {
+import Fetch from './fetchApi';
+import { AddTaskForm, IAddTask, IGetTasks } from './types';
+import XMLHTTP from './xmlHTTP';
 
-  constructor(url, dataFetcher) {
+export default class Controller {
+  url: URL;
+  dataFetcher: Fetch | XMLHTTP;
+
+  constructor(url: URL, dataFetcher: Fetch | XMLHTTP) {
     this.url = url;
     this.dataFetcher = dataFetcher;
   }
 
-  async getData() {
+  async getData(): Promise<IGetTasks[]> {
     const response = await this.dataFetcher.getData(this.url);
     console.log('Getting data:');
     return response;
   }
-  async addData(name, info, isCompleted, isImportant) {
-    const response = await this.dataFetcher.addData(this.url, name, info, isCompleted, isImportant);
+  async addData(formData: AddTaskForm): Promise<IAddTask> {
+    const response = await this.dataFetcher.addData(this.url, formData);
     console.log('Adding data:');
     return response;
   }

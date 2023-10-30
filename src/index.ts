@@ -1,40 +1,43 @@
 import Controller from './controller';
 import Fetch from './fetchApi';
+import { AddTaskForm, IAddTask } from './types';
 import XMLHTTP from './xmlHTTP';
 
-const url = 'http://37.220.80.108/tasks';
+const url = new URL('http://37.220.80.108/tasks');
 
 let controller = new Controller(url, new XMLHTTP());
 
-const select = document.querySelector('.select');
-const getDataButton = document.querySelector('.get-data-button');
-const addDataButton = document.querySelector('.add-data-button');
-const changeDataButton = document.querySelector('.change-data-button');
-const changeInfoButton = document.querySelector('.change-info-button');
-const deleteDataButton = document.querySelector('.delete-data-button');
+const select = document.querySelector('.select') as HTMLSelectElement;
+const getDataButton = document.querySelector('.get-data-button') as Element;
+const addDataButton = document.querySelector('.add-data-button') as Element;
+const changeDataButton = document.querySelector('.change-data-button') as Element;
+const changeInfoButton = document.querySelector('.change-info-button') as Element;
+const deleteDataButton = document.querySelector('.delete-data-button') as Element;
 
-const list = document.querySelector('.list');
+const list = document.querySelector('.list') as Element;
 
 select.addEventListener('change', (e) => {
-  changeFetcher(e.target.value)
-})
+  if (e.target) {
+    changeFetcher((e.target as HTMLSelectElement).value);
+  }
+});
 getDataButton.addEventListener('click', displayTask);
 addDataButton.addEventListener('click', addTask);
 changeDataButton.addEventListener('click', changeTask);
 changeInfoButton.addEventListener('click', changeTaskPartially);
 deleteDataButton.addEventListener('click', deleteTask);
 
-function changeFetcher(fetchType){
+function changeFetcher(fetchType: string): void {
   console.log(fetchType);
-  controller = (fetchType === 'Fetch' ? new Controller(url, new Fetch()) : new Controller(url, new XMLHTTP()));
+  controller = fetchType === 'Fetch' ? new Controller(url, new Fetch()) : new Controller(url, new XMLHTTP());
   console.log(controller);
 }
 
-function displayTaskInfo(innerList) {
+function displayTaskInfo(innerList: HTMLUListElement): void {
   innerList.classList.contains('hidden') ? innerList.classList.remove('hidden') : innerList.classList.add('hidden');
 }
 
-async function displayTask() {
+async function displayTask(): Promise<void> {
   list.innerHTML = '';
   const data = await controller.getData();
   console.log(data);
@@ -69,31 +72,26 @@ async function displayTask() {
   });
 }
 
-async function addTask() {
-  const form = document.querySelector('.add-form');
+async function addTask(): Promise<void> {
+  const form = document.querySelector('.add-form') as HTMLFormElement;
   if (form.checkValidity()) {
     list.innerHTML = '';
 
     form.addEventListener('submit', (e) => e.preventDefault());
     const formData = new FormData(form);
-    const isImportant = document.querySelector('#isImportant');
-    const isCompleted = document.querySelector('#isCompleted');
+    const isImportant = document.querySelector('#isImportant') as HTMLInputElement;
+    const isCompleted = document.querySelector('#isCompleted') as HTMLInputElement;
 
-    formData.append('isImportant', isImportant.checked ? true : false);
-    formData.append('isCompleted', isCompleted.checked ? true : false);
+    formData.append('isImportant', isImportant.checked ? 'true' : 'false');
+    formData.append('isCompleted', isCompleted.checked ? 'true' : 'false');
 
-    const formDataObject = {};
+    const formDataObject: AddTaskForm = {};
 
     formData.forEach((val, key) => {
-      formDataObject[key] = val;
+      formDataObject[key as keyof AddTaskForm] = String(val);
     });
 
-    const data = await controller.addData(
-      formDataObject.name,
-      formDataObject.info,
-      formDataObject.isCompleted,
-      formDataObject.isImportant
-    );
+    const data = await controller.addData(formDataObject);
 
     console.log(data);
     const taskElement = document.createElement('p');

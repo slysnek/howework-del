@@ -1,5 +1,7 @@
+import { AddTaskForm, IAddTask, IGetTasks } from './types';
+
 export default class XMLHTTP {
-  async getData(url) {
+  async getData(url: URL): Promise<IGetTasks[]> {
     try {
       const response = await this.sendRequest('GET', url);
       const parsedData = JSON.parse(response);
@@ -9,13 +11,13 @@ export default class XMLHTTP {
     }
   }
 
-  async addData(url, name, info, isCompleted, isImportant) {
+  async addData(url: URL, formData: AddTaskForm): Promise<IAddTask> {
     try {
       const requestBody = JSON.stringify({
-        name: name,
-        info: info,
-        isCompleted: isCompleted,
-        isImportant: isImportant,
+        name: formData.name,
+        info: formData.info,
+        isCompleted: formData.isCompleted,
+        isImportant: formData.isImportant,
       });
       const response = await this.sendRequest('POST', url, requestBody);
       const parsedData = JSON.parse(response);
@@ -67,7 +69,7 @@ export default class XMLHTTP {
     }
   }
 
-  sendRequest(method, url, body = null) {
+  sendRequest(method: string, url: URL, body: string | null = null): Promise<T> {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open(method, url, true);
