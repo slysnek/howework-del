@@ -12,23 +12,23 @@ export default class Controller {
     console.log('Getting data:');
     return response;
   }
-  async addData(title, body, userId){
-    const response = await this.apiFetcher.addData(this.url, title, body, userId);
+  async addData(name, info, isCompleted, isImportant){
+    const response = await this.apiFetcher.addData(this.url, name, info, isCompleted, isImportant);
     console.log('Adding data:');
     return response;
   }
-  async changeData(postId, title, body, userId){
-    const response = await this.apiFetcher.changeData(this.url, postId, title, body, userId)
+  async changeData(id, name, info, isCompleted, isImportant){
+    const response = await this.apiFetcher.changeData(this.url, id, name, info, isCompleted, isImportant)
     console.log('Changing data:');
     return response;
   }
-  async changeDataPartially(body, postId){
-    const response = await this.apiFetcher.changeDataPartially(this.url, body, postId)
+  async changeDataPartially(info, id){
+    const response = await this.apiFetcher.changeDataPartially(this.url, info, id)
     console.log('Changing data partially:');
     return response;
   }
-  async deleteData(postId){
-    const response = await this.apiFetcher.deleteData(this.url, postId);
+  async deleteData(id){
+    const response = await this.apiFetcher.deleteData(this.url, id);
     console.log('Deleted data.');
     return response;
   }

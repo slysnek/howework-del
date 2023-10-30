@@ -1,67 +1,170 @@
 import Controller from "./controller.js";
 
-const url = 'https://jsonplaceholder.typicode.com/posts';
+const url = 'http://37.220.80.108/tasks';
 
 const controller = new Controller(url);
 
 const getDataButton = document.querySelector('.get-data-button');
 const addDataButton = document.querySelector('.add-data-button');
 const changeDataButton = document.querySelector('.change-data-button');
-const changeTitleButton = document.querySelector('.change-title-button');
+const changeInfoButton = document.querySelector('.change-info-button');
 const deleteDataButton = document.querySelector('.delete-data-button');
 
-getDataButton.addEventListener('click', displayData)
-addDataButton.addEventListener('click', addData)
-changeDataButton.addEventListener('click', changeData)
-changeTitleButton.addEventListener('click', changeTitle)
-deleteDataButton.addEventListener('click', deleteData)
+getDataButton.addEventListener('click', displayTask)
+addDataButton.addEventListener('click', addTask)
+changeDataButton.addEventListener('click', changeTask)
+changeInfoButton.addEventListener('click', changeTaskPartially)
+deleteDataButton.addEventListener('click', deleteTask)
 
 const list = document.querySelector('.list');
-console.log(list);
 
-async function displayData() {
+/* {
+  "name": "Это обновленная задача",
+  "info": "Обновленная задача",
+  "isCompleted": true,
+  "isImportant": false,
+  "id": 11
+  }, */
+
+async function displayTask() {
   list.innerHTML = '';
   const data = await controller.getData();
   console.log(data);
-  data.map((post) => {
-    const postElement = document.createElement('li');
-    postElement.textContent = post.title;
-    list.appendChild(postElement);
+  data.map((task) => {
+    const taskElement = document.createElement('li');
+    const innerList = document.createElement('ul');
+    const info = document.createElement('li');
+    const isCompleted = document.createElement('li');
+    const isImportant = document.createElement('li');
+    const id = document.createElement('li');
+
+    taskElement.classList.add('list-element');
+    innerList.classList.add('hidden');
+
+    taskElement.textContent = task.name;
+    info.textContent = task.info;
+    isCompleted.textContent = task.isCompleted;
+    isImportant.textContent = task.isImportant;
+    id.textContent = task.id;
+
+    taskElement.appendChild(innerList);
+    innerList.appendChild(info);
+    innerList.appendChild(isCompleted);
+    innerList.appendChild(isImportant);
+    innerList.appendChild(id);
+
+    taskElement.addEventListener('click', () => {
+      displayTaskInfo(innerList);
+    })
+
+    list.appendChild(taskElement);
   })
 }
 
-async function addData() {
-  list.innerHTML = '';
-  const data = await controller.addData('Example title', 'Example body', 666);
-  console.log(data);
-  const postElement = document.createElement('li');
-  postElement.textContent = `Created post with title "${data.title}", body "${data.body}", userId ${data.userId}. Post ID: ${data.id}`
-  list.appendChild(postElement);
+function displayTaskInfo(innerList) {
+  innerList.classList.contains('hidden') ? innerList.classList.remove('hidden') : innerList.classList.add('hidden')
 }
 
-async function changeData() {
+async function addTask() {
   list.innerHTML = '';
-  const data = await controller.changeData(99, 'new example title', 'new body', 666);
-  console.log(data);
-  const postElement = document.createElement('li');
-  postElement.textContent = `Changed post with ID ${data.id}. New title: "${data.title}", new body: "${data.body}", userId ${data.userId}.`
-  list.appendChild(postElement);
+
+  const form = document.querySelector('.add-form');
+  if (form.checkValidity()) {
+    form.addEventListener('submit', (e) => e.preventDefault())
+    const formData = new FormData(form);
+    const isImportant = document.querySelector('#isImportant');
+    const isCompleted = document.querySelector('#isCompleted');
+
+    formData.append('isImportant', isImportant.checked ? true : false);
+    formData.append('isCompleted', isCompleted.checked ? true : false);
+
+    const formDataObject = {};
+
+    formData.forEach((val, key) => {
+      formDataObject[key] = val;
+    })
+    console.log(formDataObject);
+
+    const data = await controller.addData(formDataObject.name, formDataObject.info, formDataObject.isCompleted, formDataObject.isImportant);
+
+    console.log(data);
+    const taskElement = document.createElement('p');
+    taskElement.textContent = `Created task with title "${data.name}", body "${data.info}", id ${data.id}. Important: ${data.isImportant}. Completed: ${data.isCompleted}`
+    list.appendChild(taskElement);
+
+    form.reset();
+  }
+
 }
 
-async function changeTitle() {
+async function changeTask() {
   list.innerHTML = '';
-  const data = await controller.changeDataPartially('new title partially changed', 50);
-  console.log(data);
-  const postElement = document.createElement('li');
-  postElement.textContent = `Changed post with ID ${data.id}. New title: "${data.title}". User ID: ${data.userId}`
-  list.appendChild(postElement);
+
+  const form = document.querySelector('.change-form');
+  if (form.checkValidity()) {
+    form.addEventListener('submit', (e) => e.preventDefault())
+    const formData = new FormData(form);
+    const isImportant = document.querySelector('#isStillImportant');
+    const isCompleted = document.querySelector('#isStillCompleted');
+
+    formData.append('isImportant', isImportant.checked ? true : false);
+    formData.append('isCompleted', isCompleted.checked ? true : false);
+
+    const formDataObject = {};
+
+    formData.forEach((val, key) => {
+      formDataObject[key] = val;
+    })
+    console.log(formDataObject);
+
+    const data = await controller.changeData(formDataObject.id, formDataObject.name, formDataObject.info, formDataObject.isCompleted, formDataObject.isImportant);
+
+    console.log(data);
+    const taskElement = document.createElement('p');
+    taskElement.textContent = `Changed task with id "${data.id}". New name: "${data.name}", new info:  "${data.info}". Important: ${data.isImportant}. Completed: ${data.isCompleted}`
+    list.appendChild(taskElement);
+
+    form.reset();
+  }
 }
 
-async function deleteData() {
+async function changeTaskPartially() {
   list.innerHTML = '';
-  const data = await controller.deleteData(50);
-  console.log(data);
-  const postElement = document.createElement('li');
-  postElement.textContent = `Deleted post with ID 50`
-  list.appendChild(postElement);
+
+  const form = document.querySelector('.change-partially-form');
+  if (form.checkValidity()) {
+    form.addEventListener('submit', (e) => e.preventDefault())
+    const formData = new FormData(form);
+
+    const formDataObject = {};
+
+    formData.forEach((val, key) => {
+      formDataObject[key] = val;
+    })
+    console.log(formDataObject);
+
+    const data = await controller.changeDataPartially(formDataObject.info, formDataObject.id);
+
+    console.log(data);
+    const taskElement = document.createElement('p');
+    taskElement.textContent = `Changed info for task with id "${data.id} partially". New info: "${data.info}".`
+    list.appendChild(taskElement);
+
+    form.reset();
+  }
+}
+
+async function deleteTask() {
+  list.innerHTML = '';
+  const form = document.querySelector('.delete-form');
+  if (form.checkValidity()) {
+    form.addEventListener('submit', (e) => e.preventDefault())
+    const formData = new FormData(form);
+    const taskIdToDelete = formData.get('id');
+    const data = await controller.deleteData(taskIdToDelete);
+    console.log(data);
+    const taskElement = document.createElement('p');
+    taskElement.textContent = `Deleted task with id ${taskIdToDelete}`
+    list.appendChild(taskElement);
+  }
 }
