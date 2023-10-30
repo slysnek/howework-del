@@ -74,7 +74,7 @@ export default class XMLHTTP {
       xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
 
       xhr.onload = function () {
-        if (xhr.status === 200) {
+        if (xhr.status === 200 || xhr.status === 201) {
           resolve(xhr.responseText);
         } else {
           reject(`XHR error: ${xhr.status} ${xhr.statusText}`);
