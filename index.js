@@ -42,10 +42,10 @@ async function displayTask() {
     innerList.classList.add('hidden');
 
     taskElement.textContent = task.name;
-    info.textContent = task.info;
-    isCompleted.textContent = task.isCompleted;
-    isImportant.textContent = task.isImportant;
-    id.textContent = task.id;
+    info.textContent = `Info: ${task.info}`;
+    isCompleted.textContent = `Completed: ${task.isCompleted}`;
+    isImportant.textContent = `Important: ${task.isImportant}`;
+    id.textContent = `Id: ${task.id}`;
 
     taskElement.appendChild(innerList);
     innerList.appendChild(info);

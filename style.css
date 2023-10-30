@@ -6,17 +6,34 @@
 
 :root {
   --bg-color: rgb(86, 86, 102);
+  --bg-color-header: rgb(59, 59, 70);
   --bg-color-light: rgb(152, 152, 182);
+  --font-color: rgb(240, 240, 240);
 }
 
-li {
-  list-style-position: inside;
+input{
+  padding: 6px;
+  margin: 8px 0;
+  border-radius: 16px;
 }
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0 10%;
   background-color: var(--bg-color);
+  color: var(--font-color);
+}
+
+button {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.1rem;
+  padding: 4px;
+  border-radius: 16px;
+  cursor: pointer;
+  border: 1px solid black;
+}
+
+button:hover{
+  background-color: var(--bg-color-light);
 }
 
 .hidden {
@@ -24,9 +41,11 @@ body {
 }
 
 .controller-wrapper {
+  background-color: var(--bg-color-header);
+  width: 100%;
   margin: 0 auto;
-  padding: 16px;
-  border: 1px solid black;
+  padding: 24px 5%;
+  box-shadow: 0px 2px 8px black;
   min-width: 200px;
   display: flex;
   flex-direction: row;
@@ -34,6 +53,14 @@ body {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 16px;
+}
+
+.controller-wrapper:nth-child(even){
+  background-color: var(--bg-color-light);
+}
+
+.list{
+  margin: 16px;
 }
 
 .controller-wrapper button {
@@ -47,6 +74,9 @@ body {
 }
 
 .list-element{
+  padding: 4px;
+  border-radius: 16px;
+  list-style-position: inside;
   cursor: pointer;
 }
 
