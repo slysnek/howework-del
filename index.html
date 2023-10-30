@@ -10,6 +10,10 @@
   <body>
     <header>
       <div class="controller-wrapper">
+        <select class="select">
+          <option value="XML">XMLHTTPRequest</option>
+          <option value="Fetch">Fetch</option>
+        </select>
         <button class="get-data-button">display tasks</button>
         <form class="add-form form">
           <input name="name" required placeholder="Task Title" class="add-input" type="text" />
@@ -57,5 +61,6 @@
   </body>
   <script src="index.js" type="module"></script>
   <script src="controller.js" type="module"></script>
-  <script src="api.js" type="module"></script>
+  <script src="fetchApi.js" type="module"></script>
+  <script src="xmlHTTP.js" type="module"></script>
 </html>

@@ -17,6 +17,12 @@ input {
   border-radius: 16px;
 }
 
+select {
+  padding: 6px;
+  margin: 8px 0;
+  border-radius: 16px;
+}
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--bg-color);

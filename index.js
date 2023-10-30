@@ -1,22 +1,38 @@
 import Controller from './controller.js';
+import Fetch from './fetchApi.js';
+import XMLHTTP from './xmlHTTP.js';
 
 const url = 'http://37.220.80.108/tasks';
 
-const controller = new Controller(url);
+let controller = new Controller(url, new XMLHTTP());
 
+const select = document.querySelector('.select');
 const getDataButton = document.querySelector('.get-data-button');
 const addDataButton = document.querySelector('.add-data-button');
 const changeDataButton = document.querySelector('.change-data-button');
 const changeInfoButton = document.querySelector('.change-info-button');
 const deleteDataButton = document.querySelector('.delete-data-button');
 
+const list = document.querySelector('.list');
+
+select.addEventListener('change', (e) => {
+  changeFetcher(e.target.value)
+})
 getDataButton.addEventListener('click', displayTask);
 addDataButton.addEventListener('click', addTask);
 changeDataButton.addEventListener('click', changeTask);
 changeInfoButton.addEventListener('click', changeTaskPartially);
 deleteDataButton.addEventListener('click', deleteTask);
 
-const list = document.querySelector('.list');
+function changeFetcher(fetchType){
+  console.log(fetchType);
+  controller = (fetchType === 'Fetch' ? new Controller(url, new Fetch()) : new Controller(url, new XMLHTTP()));
+  console.log(controller);
+}
+
+function displayTaskInfo(innerList) {
+  innerList.classList.contains('hidden') ? innerList.classList.remove('hidden') : innerList.classList.add('hidden');
+}
 
 async function displayTask() {
   list.innerHTML = '';
@@ -51,10 +67,6 @@ async function displayTask() {
 
     list.appendChild(taskElement);
   });
-}
-
-function displayTaskInfo(innerList) {
-  innerList.classList.contains('hidden') ? innerList.classList.remove('hidden') : innerList.classList.add('hidden');
 }
 
 async function addTask() {
