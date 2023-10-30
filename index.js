@@ -58,10 +58,10 @@ function displayTaskInfo(innerList) {
 }
 
 async function addTask() {
+  const form = document.querySelector('.add-form');
   if (form.checkValidity()) {
     list.innerHTML = '';
 
-    const form = document.querySelector('.add-form');
     form.addEventListener('submit', (e) => e.preventDefault());
     const formData = new FormData(form);
     const isImportant = document.querySelector('#isImportant');
@@ -94,10 +94,10 @@ async function addTask() {
 }
 
 async function changeTask() {
+  const form = document.querySelector('.change-form');
   if (form.checkValidity()) {
     list.innerHTML = '';
 
-    const form = document.querySelector('.change-form');
     form.addEventListener('submit', (e) => e.preventDefault());
     const formData = new FormData(form);
     const isImportant = document.querySelector('#isStillImportant');
@@ -131,10 +131,10 @@ async function changeTask() {
 }
 
 async function changeTaskPartially() {
+  const form = document.querySelector('.change-partially-form');
   if (form.checkValidity()) {
     list.innerHTML = '';
 
-    const form = document.querySelector('.change-partially-form');
     form.addEventListener('submit', (e) => e.preventDefault());
     const formData = new FormData(form);
 
@@ -157,9 +157,9 @@ async function changeTaskPartially() {
 }
 
 async function deleteTask() {
+  const form = document.querySelector('.delete-form');
   if (form.checkValidity()) {
     list.innerHTML = '';
-    const form = document.querySelector('.delete-form');
 
     form.addEventListener('submit', (e) => e.preventDefault());
 
