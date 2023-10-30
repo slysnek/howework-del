@@ -1,4 +1,4 @@
-import Controller from "./controller.js";
+import Controller from './controller.js';
 
 const url = 'http://37.220.80.108/tasks';
 
@@ -10,21 +10,13 @@ const changeDataButton = document.querySelector('.change-data-button');
 const changeInfoButton = document.querySelector('.change-info-button');
 const deleteDataButton = document.querySelector('.delete-data-button');
 
-getDataButton.addEventListener('click', displayTask)
-addDataButton.addEventListener('click', addTask)
-changeDataButton.addEventListener('click', changeTask)
-changeInfoButton.addEventListener('click', changeTaskPartially)
-deleteDataButton.addEventListener('click', deleteTask)
+getDataButton.addEventListener('click', displayTask);
+addDataButton.addEventListener('click', addTask);
+changeDataButton.addEventListener('click', changeTask);
+changeInfoButton.addEventListener('click', changeTaskPartially);
+deleteDataButton.addEventListener('click', deleteTask);
 
 const list = document.querySelector('.list');
-
-/* {
-  "name": "Это обновленная задача",
-  "info": "Обновленная задача",
-  "isCompleted": true,
-  "isImportant": false,
-  "id": 11
-  }, */
 
 async function displayTask() {
   list.innerHTML = '';
@@ -55,22 +47,22 @@ async function displayTask() {
 
     taskElement.addEventListener('click', () => {
       displayTaskInfo(innerList);
-    })
+    });
 
     list.appendChild(taskElement);
-  })
+  });
 }
 
 function displayTaskInfo(innerList) {
-  innerList.classList.contains('hidden') ? innerList.classList.remove('hidden') : innerList.classList.add('hidden')
+  innerList.classList.contains('hidden') ? innerList.classList.remove('hidden') : innerList.classList.add('hidden');
 }
 
 async function addTask() {
-  list.innerHTML = '';
-
-  const form = document.querySelector('.add-form');
   if (form.checkValidity()) {
-    form.addEventListener('submit', (e) => e.preventDefault())
+    list.innerHTML = '';
+
+    const form = document.querySelector('.add-form');
+    form.addEventListener('submit', (e) => e.preventDefault());
     const formData = new FormData(form);
     const isImportant = document.querySelector('#isImportant');
     const isCompleted = document.querySelector('#isCompleted');
@@ -82,27 +74,31 @@ async function addTask() {
 
     formData.forEach((val, key) => {
       formDataObject[key] = val;
-    })
+    });
     console.log(formDataObject);
 
-    const data = await controller.addData(formDataObject.name, formDataObject.info, formDataObject.isCompleted, formDataObject.isImportant);
+    const data = await controller.addData(
+      formDataObject.name,
+      formDataObject.info,
+      formDataObject.isCompleted,
+      formDataObject.isImportant
+    );
 
     console.log(data);
     const taskElement = document.createElement('p');
-    taskElement.textContent = `Created task with title "${data.name}", body "${data.info}", id ${data.id}. Important: ${data.isImportant}. Completed: ${data.isCompleted}`
+    taskElement.textContent = `Created task with title "${data.name}", body "${data.info}", id ${data.id}. Important: ${data.isImportant}. Completed: ${data.isCompleted}`;
     list.appendChild(taskElement);
 
     form.reset();
   }
-
 }
 
 async function changeTask() {
-  list.innerHTML = '';
-
-  const form = document.querySelector('.change-form');
   if (form.checkValidity()) {
-    form.addEventListener('submit', (e) => e.preventDefault())
+    list.innerHTML = '';
+
+    const form = document.querySelector('.change-form');
+    form.addEventListener('submit', (e) => e.preventDefault());
     const formData = new FormData(form);
     const isImportant = document.querySelector('#isStillImportant');
     const isCompleted = document.querySelector('#isStillCompleted');
@@ -114,14 +110,20 @@ async function changeTask() {
 
     formData.forEach((val, key) => {
       formDataObject[key] = val;
-    })
+    });
     console.log(formDataObject);
 
-    const data = await controller.changeData(formDataObject.id, formDataObject.name, formDataObject.info, formDataObject.isCompleted, formDataObject.isImportant);
+    const data = await controller.changeData(
+      formDataObject.id,
+      formDataObject.name,
+      formDataObject.info,
+      formDataObject.isCompleted,
+      formDataObject.isImportant
+    );
 
     console.log(data);
     const taskElement = document.createElement('p');
-    taskElement.textContent = `Changed task with id "${data.id}". New name: "${data.name}", new info:  "${data.info}". Important: ${data.isImportant}. Completed: ${data.isCompleted}`
+    taskElement.textContent = `Changed task with id "${data.id}". New name: "${data.name}", new info:  "${data.info}". Important: ${data.isImportant}. Completed: ${data.isCompleted}`;
     list.appendChild(taskElement);
 
     form.reset();
@@ -129,25 +131,25 @@ async function changeTask() {
 }
 
 async function changeTaskPartially() {
-  list.innerHTML = '';
-
-  const form = document.querySelector('.change-partially-form');
   if (form.checkValidity()) {
-    form.addEventListener('submit', (e) => e.preventDefault())
+    list.innerHTML = '';
+
+    const form = document.querySelector('.change-partially-form');
+    form.addEventListener('submit', (e) => e.preventDefault());
     const formData = new FormData(form);
 
     const formDataObject = {};
 
     formData.forEach((val, key) => {
       formDataObject[key] = val;
-    })
+    });
     console.log(formDataObject);
 
     const data = await controller.changeDataPartially(formDataObject.info, formDataObject.id);
 
     console.log(data);
     const taskElement = document.createElement('p');
-    taskElement.textContent = `Changed info for task with id "${data.id} partially". New info: "${data.info}".`
+    taskElement.textContent = `Changed info for task with id "${data.id} partially". New info: "${data.info}".`;
     list.appendChild(taskElement);
 
     form.reset();
@@ -155,16 +157,19 @@ async function changeTaskPartially() {
 }
 
 async function deleteTask() {
-  list.innerHTML = '';
-  const form = document.querySelector('.delete-form');
   if (form.checkValidity()) {
-    form.addEventListener('submit', (e) => e.preventDefault())
+    list.innerHTML = '';
+    const form = document.querySelector('.delete-form');
+
+    form.addEventListener('submit', (e) => e.preventDefault());
+
     const formData = new FormData(form);
     const taskIdToDelete = formData.get('id');
     const data = await controller.deleteData(taskIdToDelete);
     console.log(data);
+
     const taskElement = document.createElement('p');
-    taskElement.textContent = `Deleted task with id ${taskIdToDelete}`
+    taskElement.textContent = `Deleted task with id ${taskIdToDelete}`;
     list.appendChild(taskElement);
   }
 }
