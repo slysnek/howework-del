@@ -1,4 +1,4 @@
-export default class APIFetch {
+export default class Fetch {
   async getData(url) {
     try {
       const data = await fetch(url, {

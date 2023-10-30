@@ -75,7 +75,6 @@ async function addTask() {
     formData.forEach((val, key) => {
       formDataObject[key] = val;
     });
-    console.log(formDataObject);
 
     const data = await controller.addData(
       formDataObject.name,
@@ -111,7 +110,6 @@ async function changeTask() {
     formData.forEach((val, key) => {
       formDataObject[key] = val;
     });
-    console.log(formDataObject);
 
     const data = await controller.changeData(
       formDataObject.id,
@@ -143,7 +141,6 @@ async function changeTaskPartially() {
     formData.forEach((val, key) => {
       formDataObject[key] = val;
     });
-    console.log(formDataObject);
 
     const data = await controller.changeDataPartially(formDataObject.info, formDataObject.id);
 
@@ -169,7 +166,7 @@ async function deleteTask() {
     console.log(data);
 
     const taskElement = document.createElement('p');
-    taskElement.textContent = `Deleted task with id ${taskIdToDelete}`;
+    taskElement.textContent = `Task with id ${taskIdToDelete} is deleted`;
     list.appendChild(taskElement);
   }
 }
