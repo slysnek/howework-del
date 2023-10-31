@@ -1,5 +1,5 @@
 import Fetch from './fetchApi';
-import { AddTaskForm, IAddTask, IGetTasks } from './types';
+import { AddTaskForm, ChangeTaskForm, ChangeTaskPartiallyForm, ITasksResponse } from './types';
 import XMLHTTP from './xmlHTTP';
 
 export default class Controller {
@@ -11,30 +11,29 @@ export default class Controller {
     this.dataFetcher = dataFetcher;
   }
 
-  async getData(): Promise<IGetTasks[]> {
+  async getData(): Promise<ITasksResponse[]> {
     const response = await this.dataFetcher.getData(this.url);
     console.log('Getting data:');
     return response;
   }
-  async addData(formData: AddTaskForm): Promise<IAddTask> {
+  async addData(formData: AddTaskForm): Promise<ITasksResponse> {
     const response = await this.dataFetcher.addData(this.url, formData);
     console.log('Adding data:');
     return response;
   }
-  async changeData(id, name, info, isCompleted, isImportant) {
-    const response = await this.dataFetcher.changeData(this.url, id, name, info, isCompleted, isImportant)
+  async changeData(formData: ChangeTaskForm): Promise<ITasksResponse> {
+    const response = await this.dataFetcher.changeData(this.url, formData);
     console.log('Changing data:');
     return response;
   }
-  async changeDataPartially(info, id) {
-    const response = await this.dataFetcher.changeDataPartially(this.url, info, id)
+  async changeDataPartially(formData: ChangeTaskPartiallyForm): Promise<ITasksResponse> {
+    const response = await this.dataFetcher.changeDataPartially(this.url, formData);
     console.log('Changing data partially:');
     return response;
   }
-  async deleteData(id) {
+  async deleteData(id: string): Promise<void> {
     const response = await this.dataFetcher.deleteData(this.url, id);
     console.log('Deleted data.');
     return response;
   }
-
 }

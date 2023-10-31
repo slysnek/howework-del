@@ -1,7 +1,7 @@
-import Controller from './controller';
-import Fetch from './fetchApi';
-import { AddTaskForm, IAddTask } from './types';
-import XMLHTTP from './xmlHTTP';
+import Controller from './controller.js';
+import Fetch from './fetchApi.js';
+import { AddTaskForm, ChangeTaskForm, ChangeTaskPartiallyForm } from './types';
+import XMLHTTP from './xmlHTTP.js';
 
 const url = new URL('http://37.220.80.108/tasks');
 
@@ -102,32 +102,26 @@ async function addTask(): Promise<void> {
   }
 }
 
-async function changeTask() {
-  const form = document.querySelector('.change-form');
+async function changeTask(): Promise<void> {
+  const form = document.querySelector('.change-form') as HTMLFormElement;
   if (form.checkValidity()) {
     list.innerHTML = '';
 
     form.addEventListener('submit', (e) => e.preventDefault());
     const formData = new FormData(form);
-    const isImportant = document.querySelector('#isStillImportant');
-    const isCompleted = document.querySelector('#isStillCompleted');
+    const isImportant = document.querySelector('#isStillImportant') as HTMLInputElement;
+    const isCompleted = document.querySelector('#isStillCompleted') as HTMLInputElement;
 
-    formData.append('isImportant', isImportant.checked ? true : false);
-    formData.append('isCompleted', isCompleted.checked ? true : false);
+    formData.append('isImportant', isImportant.checked ? 'true' : 'false');
+    formData.append('isCompleted', isCompleted.checked ? 'true' : 'false');
 
-    const formDataObject = {};
+    const formDataObject: ChangeTaskForm = {};
 
     formData.forEach((val, key) => {
-      formDataObject[key] = val;
+      formDataObject[key as keyof ChangeTaskForm] = String(val);
     });
 
-    const data = await controller.changeData(
-      formDataObject.id,
-      formDataObject.name,
-      formDataObject.info,
-      formDataObject.isCompleted,
-      formDataObject.isImportant
-    );
+    const data = await controller.changeData(formDataObject);
 
     console.log(data);
     const taskElement = document.createElement('p');
@@ -138,21 +132,21 @@ async function changeTask() {
   }
 }
 
-async function changeTaskPartially() {
-  const form = document.querySelector('.change-partially-form');
+async function changeTaskPartially(): Promise<void> {
+  const form = document.querySelector('.change-partially-form') as HTMLFormElement;
   if (form.checkValidity()) {
     list.innerHTML = '';
 
     form.addEventListener('submit', (e) => e.preventDefault());
     const formData = new FormData(form);
 
-    const formDataObject = {};
+    const formDataObject: ChangeTaskPartiallyForm = {};
 
     formData.forEach((val, key) => {
-      formDataObject[key] = val;
+      formDataObject[key as keyof ChangeTaskPartiallyForm] = String(val);
     });
 
-    const data = await controller.changeDataPartially(formDataObject.info, formDataObject.id);
+    const data = await controller.changeDataPartially(formDataObject);
 
     console.log(data);
     const taskElement = document.createElement('p');
@@ -163,18 +157,16 @@ async function changeTaskPartially() {
   }
 }
 
-async function deleteTask() {
-  const form = document.querySelector('.delete-form');
+async function deleteTask(): Promise<void> {
+  const form = document.querySelector('.delete-form') as HTMLFormElement;
   if (form.checkValidity()) {
     list.innerHTML = '';
 
     form.addEventListener('submit', (e) => e.preventDefault());
 
     const formData = new FormData(form);
-    const taskIdToDelete = formData.get('id');
-    const data = await controller.deleteData(taskIdToDelete);
-    console.log(data);
-
+    const taskIdToDelete = formData.get('id') as string;
+    await controller.deleteData(taskIdToDelete);
     const taskElement = document.createElement('p');
     taskElement.textContent = `Task with id ${taskIdToDelete} is deleted`;
     list.appendChild(taskElement);

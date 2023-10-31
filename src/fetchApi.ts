@@ -1,7 +1,7 @@
-import { AddTaskForm, IAddTask, IGetTasks } from './types';
+import { AddTaskForm, ChangeTaskForm, ChangeTaskPartiallyForm, ITasksResponse } from './types';
 
 export default class Fetch {
-  async getData(url: URL): Promise<IGetTasks[]> {
+  async getData(url: URL): Promise<ITasksResponse[]> {
     try {
       const data = await fetch(url, {
         method: 'GET',
@@ -12,7 +12,7 @@ export default class Fetch {
       throw new Error(error);
     }
   }
-  async addData(url: URL, formData: AddTaskForm): Promise<IAddTask> {
+  async addData(url: URL, formData: AddTaskForm): Promise<ITasksResponse> {
     try {
       const data = await fetch(url, {
         method: 'POST',
@@ -32,16 +32,17 @@ export default class Fetch {
       throw new Error(error);
     }
   }
-  async changeData(url, id, name, info, isCompleted, isImportant) {
+  async changeData(url: URL, formData: ChangeTaskForm): Promise<ITasksResponse> {
     try {
-      const resource = `${url}/${id}`;
+      const resource = `${url}/${formData.id}`;
       const data = await fetch(resource, {
         method: 'PUT',
         body: JSON.stringify({
-          name: name,
-          info: info,
-          isCompleted: isCompleted,
-          isImportant: isImportant,
+          name: formData.name,
+          info: formData.info,
+          isCompleted: formData.isCompleted,
+          isImportant: formData.isImportant,
+          id: formData.id,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -53,13 +54,13 @@ export default class Fetch {
       throw new Error(error);
     }
   }
-  async changeDataPartially(url, info, id) {
+  async changeDataPartially(url: URL, formData: ChangeTaskPartiallyForm): Promise<ITasksResponse> {
     try {
-      const resource = `${url}/${id}`;
+      const resource = `${url}/${formData.id}`;
       const data = await fetch(resource, {
         method: 'PATCH',
         body: JSON.stringify({
-          info: info,
+          info: formData.info,
         }),
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
@@ -71,7 +72,7 @@ export default class Fetch {
       throw new Error(error);
     }
   }
-  async deleteData(url, id) {
+  async deleteData(url: URL, id: string): Promise<void> {
     try {
       const resource = `${url}/${id}`;
       const data = await fetch(resource, {

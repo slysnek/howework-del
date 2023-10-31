@@ -1,7 +1,7 @@
-import { AddTaskForm, IAddTask, IGetTasks } from './types';
+import { AddTaskForm, ChangeTaskForm, ChangeTaskPartiallyForm, ITasksResponse } from './types';
 
 export default class XMLHTTP {
-  async getData(url: URL): Promise<IGetTasks[]> {
+  async getData(url: URL): Promise<ITasksResponse[]> {
     try {
       const response = await this.sendRequest('GET', url);
       const parsedData = JSON.parse(response);
@@ -11,7 +11,7 @@ export default class XMLHTTP {
     }
   }
 
-  async addData(url: URL, formData: AddTaskForm): Promise<IAddTask> {
+  async addData(url: URL, formData: AddTaskForm): Promise<ITasksResponse> {
     try {
       const requestBody = JSON.stringify({
         name: formData.name,
@@ -27,14 +27,15 @@ export default class XMLHTTP {
     }
   }
 
-  async changeData(url, id, name, info, isCompleted, isImportant) {
+  async changeData(url: URL, formData: ChangeTaskForm): Promise<ITasksResponse> {
     try {
-      const resource = `${url}/${id}`;
+      const resource = new URL(`${url}/${formData.id}`);
       const requestBody = JSON.stringify({
-        name: name,
-        info: info,
-        isCompleted: isCompleted,
-        isImportant: isImportant,
+        name: formData.name,
+        info: formData.info,
+        isCompleted: formData.isCompleted,
+        isImportant: formData.isImportant,
+        id: formData.id,
       });
       const response = await this.sendRequest('PUT', resource, requestBody);
       const parsedData = JSON.parse(response);
@@ -44,11 +45,11 @@ export default class XMLHTTP {
     }
   }
 
-  async changeDataPartially(url, info, id) {
+  async changeDataPartially(url: URL, formData: ChangeTaskPartiallyForm): Promise<ITasksResponse> {
     try {
-      const resource = `${url}/${id}`;
+      const resource = new URL(`${url}/${formData.id}`);
       const requestBody = JSON.stringify({
-        info: info,
+        info: formData.info,
       });
       const response = await this.sendRequest('PATCH', resource, requestBody);
       const parsedData = JSON.parse(response);
@@ -58,9 +59,9 @@ export default class XMLHTTP {
     }
   }
 
-  async deleteData(url, id) {
+  async deleteData(url: URL, id: string): Promise<void> {
     try {
-      const resource = `${url}/${id}`;
+      const resource = new URL(`${url}/${id}`);
       const response = await this.sendRequest('DELETE', resource);
       const parsedData = JSON.parse(response);
       return parsedData;
@@ -69,13 +70,13 @@ export default class XMLHTTP {
     }
   }
 
-  sendRequest(method: string, url: URL, body: string | null = null): Promise<T> {
-    return new Promise((resolve, reject) => {
+  sendRequest(method: string, url: URL, body: string | null = null): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open(method, url, true);
       xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
 
-      xhr.onload = function () {
+      xhr.onload = function (): void {
         if (xhr.status === 200 || xhr.status === 201) {
           resolve(xhr.responseText);
         } else {
@@ -83,7 +84,7 @@ export default class XMLHTTP {
         }
       };
 
-      xhr.onerror = function () {
+      xhr.onerror = function (): void {
         reject('Network error');
       };
 

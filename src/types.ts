@@ -1,12 +1,4 @@
-export interface IGetTasks {
-  name: string;
-  info: string;
-  isCompleted: boolean;
-  isImportant: boolean;
-  id: number;
-}
-
-export interface IAddTask {
+export interface ITasksResponse {
   name: string;
   info: string;
   isCompleted: boolean;
@@ -19,3 +11,7 @@ export type AddTaskForm = {
   isCompleted?: string;
   isImportant?: string;
 };
+export type ChangeTaskForm = AddTaskForm & {
+  id?: string;
+};
+export type ChangeTaskPartiallyForm = Omit<ChangeTaskForm, 'name' | 'isCompleted' | 'isImportant'>;
