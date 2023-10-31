@@ -78,6 +78,9 @@ export default class Fetch {
       const data = await fetch(resource, {
         method: 'DELETE',
       });
+      if (!data.ok) {
+        throw new Error("Task doesn't exist");
+      }
       const parsedData = await data.json();
       return parsedData;
     } catch (error) {

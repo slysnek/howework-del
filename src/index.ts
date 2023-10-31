@@ -7,14 +7,14 @@ const url = new URL('http://37.220.80.108/tasks');
 
 let controller = new Controller(url, new XMLHTTP());
 
-const select = document.querySelector('.select') as HTMLSelectElement;
-const getDataButton = document.querySelector('.get-data-button') as Element;
-const addDataButton = document.querySelector('.add-data-button') as Element;
-const changeDataButton = document.querySelector('.change-data-button') as Element;
-const changeInfoButton = document.querySelector('.change-info-button') as Element;
-const deleteDataButton = document.querySelector('.delete-data-button') as Element;
+const select = document.querySelector('.select-fetcher') as HTMLSelectElement;
+const getDataButton = document.querySelector('.controller-wrapper__get-data-button') as Element;
+const addDataButton = document.querySelector('.add-form__button') as Element;
+const changeDataButton = document.querySelector('.change-form__button') as Element;
+const changeInfoButton = document.querySelector('.change-partially-form__button') as Element;
+const deleteDataButton = document.querySelector('.delete-form__button') as Element;
 
-const list = document.querySelector('.list') as Element;
+const list = document.querySelector('.task-list') as Element;
 
 select.addEventListener('change', (e) => {
   if (e.target) {
@@ -49,7 +49,7 @@ async function displayTask(): Promise<void> {
     const isImportant = document.createElement('li');
     const id = document.createElement('li');
 
-    taskElement.classList.add('list-element');
+    taskElement.classList.add('task-list__task');
     innerList.classList.add('hidden');
 
     taskElement.textContent = task.name;
@@ -94,9 +94,9 @@ async function addTask(): Promise<void> {
     const data = await controller.addData(formDataObject);
 
     console.log(data);
-    const taskElement = document.createElement('p');
-    taskElement.textContent = `Created task with title "${data.name}", body "${data.info}", id ${data.id}. Important: ${data.isImportant}. Completed: ${data.isCompleted}`;
-    list.appendChild(taskElement);
+    const infoMessage = document.createElement('p');
+    infoMessage.textContent = `Created task with title "${data.name}", body "${data.info}", id ${data.id}. Important: ${data.isImportant}. Completed: ${data.isCompleted}`;
+    list.appendChild(infoMessage);
 
     form.reset();
   }
@@ -124,10 +124,13 @@ async function changeTask(): Promise<void> {
     const data = await controller.changeData(formDataObject);
 
     console.log(data);
-    const taskElement = document.createElement('p');
-    taskElement.textContent = `Changed task with id "${data.id}". New name: "${data.name}", new info:  "${data.info}". Important: ${data.isImportant}. Completed: ${data.isCompleted}`;
-    list.appendChild(taskElement);
+    const infoMessage = document.createElement('p');
+    if (data) {
+      infoMessage.textContent = `Changed task with id "${data.id}". New name: "${data.name}", new info:  "${data.info}". Important: ${data.isImportant}. Completed: ${data.isCompleted}`;
+    }
 
+    list.appendChild(infoMessage);
+    infoMessage.textContent = `Couldn't change the task. Perhaps it doesn't exist?`;
     form.reset();
   }
 }
@@ -149,9 +152,12 @@ async function changeTaskPartially(): Promise<void> {
     const data = await controller.changeDataPartially(formDataObject);
 
     console.log(data);
-    const taskElement = document.createElement('p');
-    taskElement.textContent = `Changed info for task with id "${data.id} partially". New info: "${data.info}".`;
-    list.appendChild(taskElement);
+    const infoMessage = document.createElement('p');
+    if (data) {
+      infoMessage.textContent = `Changed info for task with id "${data.id} partially". New info: "${data.info}".`;
+    }
+    infoMessage.textContent = `Couldn't change the task's info. Perhaps it doesn't exist?`;
+    list.appendChild(infoMessage);
 
     form.reset();
   }
@@ -166,9 +172,13 @@ async function deleteTask(): Promise<void> {
 
     const formData = new FormData(form);
     const taskIdToDelete = formData.get('id') as string;
-    await controller.deleteData(taskIdToDelete);
     const taskElement = document.createElement('p');
-    taskElement.textContent = `Task with id ${taskIdToDelete} is deleted`;
+    try {
+      await controller.deleteData(taskIdToDelete);
+      taskElement.textContent = `Task with id ${taskIdToDelete} is deleted`;
+    } catch (error) {
+      taskElement.textContent = `Couldn't delete the task. Perhaps it doesn't exist?`;
+    }
     list.appendChild(taskElement);
   }
 }
